@@ -1,15 +1,17 @@
-import {combineReducers} from 'redux';
-
-const products = (state = [] , action ) => {
+export const products = (state = {} , action ) => {
     switch (action.type) {
         case 'RECEIVE_PRODUCTS_SUCCESS':
-            return action.products.map(products => products.id);
+            return {...action.products.reduce((obj,product)=>{
+                let {id,...details} = product;
+                obj[id]=details;
+                return {...obj}
+            },{})};
         default:
             return state;
     }
 };
 
-const isFetching = (state = false, action) => {
+export const isFetching = (state = false, action) => {
     switch (action.type) {
         case 'REQUEST_PRODUCTS':
             return true;
@@ -22,7 +24,7 @@ const isFetching = (state = false, action) => {
     }
 };
 
-const errorMessage = (state = null, action) => {
+export const errorMessage = (state = null, action) => {
      switch (action.type) {
         case 'RECEIVE_PRODUCTS_FAILURE':
             return action.message;
@@ -35,10 +37,5 @@ const errorMessage = (state = null, action) => {
     }
 };
 
-const Product = combineReducers ({
-    products,
-    isFetching,
-    errorMessage,
-});
 
-export default Product;
+

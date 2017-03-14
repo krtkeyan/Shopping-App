@@ -1,7 +1,7 @@
 import React from 'react';
 import logo from './logo.svg';
 import './App.css';
-
+import ProductList from './Containers/productList';
 
 const App= () => (
       <div className="App">
@@ -9,9 +9,9 @@ const App= () => (
           <img src={logo} className="App-logo" alt="logo" />
           <h2>Welcome to React</h2>
         </div>
-        <p className="App-intro">
-         
-        </p>
+        <div className="App-intro">
+          <ProductList />
+        </div>
       </div>
   );
 
