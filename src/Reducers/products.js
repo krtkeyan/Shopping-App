@@ -24,18 +24,4 @@ export const isFetching = (state = false, action) => {
     }
 };
 
-export const errorMessage = (state = null, action) => {
-     switch (action.type) {
-        case 'RECEIVE_PRODUCTS_FAILURE':
-            return action.message;
-        case 'REQUEST_PRODUCTS':
-        case 'RECEIVE_PRODUCTS_SUCCESS':
-            return null;
-        default:
-            return state;
-
-    }
-};
-
-
 

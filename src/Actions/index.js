@@ -1,4 +1,6 @@
 import database from '../api'; 
+ 
+
 
 export const fetchProducts = () => (dispatch) => {
 
@@ -33,3 +35,34 @@ export const fetchProducts = () => (dispatch) => {
           })
       }
   } 
+
+
+  export const checkOut = () => (dispatch,getState) => {
+     let {cart,addedIds} = getState();
+     addedIds.forEach( id => {
+              let stock;
+              database.ref().child(id).child('inventory').once('value')
+              .then( snap => {
+                    stock = snap.val()-cart[id];
+                    if(stock < 0){
+                        return Promise.reject('STOCK UNAVAILABLE');
+                    }
+                    return database.ref().child(id).update(
+                        {
+                        inventory:stock
+                        }
+                    )
+              })
+              .then(()=>{
+                      dispatch({
+                        type:'CHECKOUT_REQUEST',
+                      })
+                  })
+              .catch((reason)=>{
+                      dispatch({
+                        type:'CHECKOUT_FAILURE',
+                        message:reason
+                      })
+              })
+           })
+   }

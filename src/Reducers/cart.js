@@ -1,3 +1,4 @@
+
 export const addedIds = (state=[],action) => {
     switch (action.type) {
         case 'ADD_TO_CART':
@@ -15,9 +16,9 @@ export const cart = (state = {}, action ) => {
         case 'ADD_TO_CART':
             let {id,quantity} = action;
             return {...state,...{[id]:quantity}}
-            
+        case 'CHECKOUT_REQUEST':
+            return {};          
         default:
             return state;
     } 
 } 
-
