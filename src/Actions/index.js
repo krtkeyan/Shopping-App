@@ -1,7 +1,5 @@
 import database from '../api'; 
  
-
-
 export const fetchProducts = () => (dispatch) => {
 
     dispatch({
@@ -9,8 +7,9 @@ export const fetchProducts = () => (dispatch) => {
     });
     
     database.ref('/')
-     .on('value',(snap) => {
-                dispatch({ 
+    .on('value',
+            (snap) => {
+             dispatch({ 
                     type:'RECEIVE_PRODUCTS_SUCCESS', 
                     products:snap.val(), 
                 })
@@ -23,6 +22,7 @@ export const fetchProducts = () => (dispatch) => {
                 })
             }
      )
+
   };
 
  
@@ -38,31 +38,38 @@ export const fetchProducts = () => (dispatch) => {
 
 
   export const checkOut = () => (dispatch,getState) => {
-     let {cart,addedIds} = getState();
+     let {cart,addedIds,products} = getState();
+     let promiseArray=[];
+     
      addedIds.forEach( id => {
               let stock;
-              database.ref().child(id).child('inventory').once('value')
-              .then( snap => {
+              database.ref().child(id).child('inventory').once('value', snap => {
                     stock = snap.val()-cart[id];
-                    if(stock < 0){
-                        return Promise.reject('STOCK UNAVAILABLE');
+                    
+                    if(!navigator.onLine || stock < 0 ){
+                        let message = !navigator.onLine?'NO INTERNET':'STOCK UNAVAILABLE -'+products[id].title;
+                        promiseArray.push(Promise.reject(message));
                     }
-                    return database.ref().child(id).update(
-                        {
-                        inventory:stock
-                        }
-                    )
-              })
-              .then(()=>{
+                    promiseArray.push(Promise.resolve(()=>database.ref().child(id).update(
+                                            {
+                                            inventory:stock
+                                            }
+                                      )));
+             })
+     });
+     console.log(promiseArray);
+     Promise.all([...promiseArray])
+            .then((resolver)=>{
                       dispatch({
                         type:'CHECKOUT_REQUEST',
                       })
-                  })
-              .catch((reason)=>{
+                      Promise.all([...resolver.map(update => update())]).then(()=>dispatch({
+                          type:'CHECKOUT_SUCCESS'
+                      }))
+               },(reason)=>{
                       dispatch({
                         type:'CHECKOUT_FAILURE',
                         message:reason
                       })
-              })
-           })
-   }
+               })       
+  }

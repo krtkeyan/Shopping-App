@@ -2,8 +2,8 @@ export const products = (state = {} , action ) => {
     switch (action.type) {
         case 'RECEIVE_PRODUCTS_SUCCESS':
             return {...action.products.reduce((obj,product)=>{
-                let {id,...details} = product;
-                obj[id]=details;
+                let {id} = product;
+                obj[id]=product;
                 return {...obj}
             },{})};
         default:

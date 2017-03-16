@@ -1,4 +1,8 @@
-
+import {createSelector} from 'reselect';
+let initialState = {
+    addedIds:[],
+    cart:{}
+}
 export const addedIds = (state=[],action) => {
     switch (action.type) {
         case 'ADD_TO_CART':
@@ -6,6 +10,8 @@ export const addedIds = (state=[],action) => {
                 return state;
             }
             return [...state,...action.id]; 
+        case 'CHECKOUT_SUCCESS':
+            return initialState.addedIds
         default:
             return state;
     } 
@@ -17,8 +23,23 @@ export const cart = (state = {}, action ) => {
             let {id,quantity} = action;
             return {...state,...{[id]:quantity}}
         case 'CHECKOUT_REQUEST':
-            return {};          
+            return state;
+        case 'CHECKOUT_SUCCESS':
+            return initialState.cart;          
         default:
             return state;
     } 
 } 
+const getItemsById = (state,id) => state.products[id];
+
+const getItemsInCart = (state) => state.addedIds;
+
+const getQuantityById = (state,id) => state.cart[id]
+
+const getItemPriceById = (state,id) => state.products[id].price
+
+export const getTotalById = createSelector(getItemPriceById,getQuantityById,(price,quantity) => price*quantity) 
+
+export const getProductsInCart = (state) =>  state.addedIds.map(id => getItemsById(state,id));
+
+export const getTotalInCart = (state) => getItemsInCart(state).reduce((total,id)=>total+getTotalById(state,id),0)
