@@ -23,7 +23,7 @@ export const cart = (state = {}, action ) => {
     switch (action.type) {
         case 'ADD_TO_CART':
             let {id,quantity} = action;
-            return {...state,...{[id]:quantity}}
+            return {...state,...{[id]:parseFloat(quantity)}}
         case 'CHECKOUT_REQUEST':
             return state;
         case 'CHECKOUT_SUCCESS':
