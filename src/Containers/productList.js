@@ -1,47 +1,79 @@
-import React from 'react';
+import React,{Component} from 'react';
 import ProductItem from './productItem';
 import {connect} from 'react-redux';
-import {addToCart,checkOut} from '../Actions';
+import {fetchProducts} from '../Actions'
 import Cart from './cart';
 import logo from '../logo.svg';
+import {Link} from 'react-router-dom';
 import  '../App.css';
+import Pagination from '../Components/pagination';
+import _ from 'lodash';
 
-let ProductList = ({products,isFetching,addToCart,checkOut}) => (
-
-    <div>
-     {  isFetching ? <img src={logo} className="App-logo" alt="logo" />:<div>
-        {
-        Object.entries(products).map(([keys,Item]) => {
-          return (
-              <ProductItem 
-                key={keys}
-                id={keys}
-                title={Item.title}
-                price={Item.price}
-                stock={Item.inventory}
-                onItemClick={addToCart}
-            />
-            )
+class ProductList extends Component {
+    constructor(props){
+        super(props);
+        this.state = {
+            pageOfItems:[],
+            visibleItems:this.props.visible
         }
-        )
-     } 
-        <button onClick={()=>{checkOut()}}>CheckOut</button> 
-       <Cart />
-        </div>  
+        this.onChangePage = this.onChangePage.bind(this);
     }
-    </div>
-)
+
+     onChangePage(pageOfItems) {
+        // update state with new page of items
+      
+        this.setState({ pageOfItems: pageOfItems });
+    }
+
+    componentDidMount(){ 
+        this.props.fetchProducts();
+    }
+    
+    componentWillReceiveProps(next){
+        this.setState({
+            visibleItems:_.intersection(this.props.visible,next.visible)
+        })
+    }
+
+    render() {
+        let {products,isFetching,visible,fetchProducts} = this.props;
+        let count = 0;
+        
+        let itemList = this.state.pageOfItems.map(itemId => {
+                let {id,title,price} = products[itemId];
+                count++;
+                return  (
+                        <div key={id}>
+                        <Link to={'/Items/'+id}>{title}-{price}</Link>
+                        </div>
+                        )
+            });
+
+        if(visible.length == 0&&!isFetching){
+            return (<div>No Items To Show </div>)
+        }
+          
+        return (
+                <div>
+                {  isFetching ? <img src={logo} className="App-logo" alt="logo" />:
+                    <div>
+                    {
+                        itemList
+                    }
+                    <Pagination items={visible} onChangePage={this.onChangePage}/>  
+                    </div>  
+                }
+                </div>  
+        )
+    }
+}
 
 const mapStateToProps = (state) =>  ({
     products:state.products,
+    visible:state.visibleProducts,
     isFetching:state.isFetching
 })
 
 
-
-ProductList = connect(mapStateToProps,{
-    addToCart,
-    checkOut
-}
-)(ProductList);
+ProductList = connect(mapStateToProps,{fetchProducts})(ProductList);
 export default ProductList;

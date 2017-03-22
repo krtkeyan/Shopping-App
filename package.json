@@ -8,11 +8,20 @@
     "redux-logger": "^2.8.2"
   },
   "dependencies": {
+    "express": "^4.15.2",
     "firebase": "^3.7.1",
+    "history": "^4.6.1",
+    "jquery": "^3.2.1",
+    "lodash": "^4.17.4",
     "normalizr": "^3.2.2",
+    "rc-pagination": "^1.7.5",
     "react": "^15.4.2",
     "react-dom": "^15.4.2",
+    "react-paginate": "^4.2.0",
     "react-redux": "^5.0.3",
+    "react-router": "^4.0.0",
+    "react-router-dom": "^4.0.0",
+    "react-throttle": "^0.3.0",
     "redux": "^3.6.0",
     "redux-thunk": "^2.2.0",
     "reselect": "^2.5.4"

@@ -1,6 +1,6 @@
 import {combineReducers} from 'redux';
 import {cart,addedIds} from './cart';
-import {products,isFetching} from './products';
+import {products,isFetching,visibleProducts} from './products';
 
 const errorMessage = (state = null, action) => {
      switch (action.type) {
@@ -18,7 +18,8 @@ const Product = combineReducers ({
     isFetching,
     errorMessage,
     cart,
-    addedIds
+    addedIds,
+    visibleProducts,
 });
 
 export default Product;

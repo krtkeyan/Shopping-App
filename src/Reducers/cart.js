@@ -9,9 +9,11 @@ export const addedIds = (state=[],action) => {
             if(state.indexOf(action.id) !== -1){
                 return state;
             }
-            return [...state,...action.id]; 
+            return [...state,action.id]; 
         case 'CHECKOUT_SUCCESS':
             return initialState.addedIds
+        case 'REMOVE_FROM_CART':
+            return state.filter((id)=>id!=action.id);
         default:
             return state;
     } 
@@ -25,12 +27,17 @@ export const cart = (state = {}, action ) => {
         case 'CHECKOUT_REQUEST':
             return state;
         case 'CHECKOUT_SUCCESS':
-            return initialState.cart;          
+            return initialState.cart;    
+        case 'REMOVE_FROM_CART':
+            let {[action.id]:omit,...res} = state;
+            return res;
         default:
             return state;
     } 
-} 
-const getItemsById = (state,id) => state.products[id];
+};
+
+
+export const getItemsById = (state,id) => state.products[id];
 
 const getItemsInCart = (state) => state.addedIds;
 
