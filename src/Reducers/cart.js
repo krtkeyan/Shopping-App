@@ -45,8 +45,11 @@ const getQuantityById = (state,id) => state.cart[id]
 
 const getItemPriceById = (state,id) => state.products[id].price
 
-export const getTotalById = createSelector(getItemPriceById,getQuantityById,(price,quantity) => price*quantity) 
+export const getTotalById = createSelector(getItemPriceById,getQuantityById,(price,quantity) => {
+   let total = (price*quantity).toFixed(2);
+   return parseFloat(total);
+}) 
 
 export const getProductsInCart = (state) =>  state.addedIds.map(id => getItemsById(state,id));
 
-export const getTotalInCart = (state) => getItemsInCart(state).reduce((total,id)=>total+getTotalById(state,id),0)
+export const getTotalInCart = (state) => getItemsInCart(state).reduce((total,id)=>total+getTotalById(state,id),0).toFixed(2)
