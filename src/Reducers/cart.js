@@ -1,19 +1,24 @@
 import {createSelector} from 'reselect';
+
 let initialState = {
     addedIds:[],
     cart:{}
 }
 export const addedIds = (state=[],action) => {
+
     switch (action.type) {
         case 'ADD_TO_CART':
             if(state.indexOf(action.id) !== -1){
                 return state;
             }
             return [...state,action.id]; 
+
         case 'CHECKOUT_SUCCESS':
-            return initialState.addedIds
+            return initialState.addedIds;
+
         case 'REMOVE_FROM_CART':
-            return state.filter((id)=>id!=action.id);
+            return state.filter((id)=>id !== action.id);
+
         default:
             return state;
     } 
@@ -23,14 +28,18 @@ export const cart = (state = {}, action ) => {
     switch (action.type) {
         case 'ADD_TO_CART':
             let {id,quantity} = action;
-            return {...state,...{[id]:parseFloat(quantity)}}
+            return {...state,...{[id]:parseFloat(quantity)}};
+
         case 'CHECKOUT_REQUEST':
             return state;
+
         case 'CHECKOUT_SUCCESS':
-            return initialState.cart;    
+            return initialState.cart;   
+
         case 'REMOVE_FROM_CART':
             let {[action.id]:omit,...res} = state;
             return res;
+            
         default:
             return state;
     } 

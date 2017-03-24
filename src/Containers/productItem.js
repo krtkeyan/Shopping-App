@@ -15,7 +15,7 @@ let ProductItem = ({product,addToCart,isFetching,fetchItem,params}) =>{
         return (<div>Not Found </div>)
     } 
     
-    let {id,title,price,inventory} = product; 
+    let {id,title,price,inventory} = product;
     let availabiltiy = inventory > 0 ;
     return (
          <div>
@@ -34,8 +34,6 @@ const mapStateToProps = (state,param) =>{
     }
 
 }
-
-
 
 ProductItem = withRouter(connect(mapStateToProps,{
     addToCart,

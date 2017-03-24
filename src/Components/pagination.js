@@ -1,16 +1,23 @@
 import React,{Component} from 'react';
 import _ from 'lodash';
-class Pagination extends React.Component {
+import RaisedButton from 'material-ui/RaisedButton';
+import {withRouter} from 'react-router';
+
+class Pagination extends Component {
     constructor(props) {
         super(props);
         this.state = { pager: {} };
+     
     }
 
     componentWillMount() {
-        this.setPage(this.props.initialPage,this.props.items);
+        this.setPage(this.props.page,this.props.items);
     }
     componentWillReceiveProps(next){
-        if(!_.isEqual(next.items,this.props.items)&&next.items.length!=0){
+        if(this.props.page !== next.page){
+            this.setPage(next.page,next.items)
+        }
+        if(!_.isEqual(next.items,this.props.items) && next.items.length !== 0){
             this.setPage(1,next.items)
         }
     }
@@ -40,7 +47,7 @@ class Pagination extends React.Component {
         currentPage = currentPage || 1;
 
         // default page size is 10
-        pageSize = pageSize || 5;
+        pageSize = pageSize || 6;
 
         // calculate total pages
         var totalPages = Math.ceil(totalItems / pageSize);
@@ -88,19 +95,21 @@ class Pagination extends React.Component {
     render() {
         var pager = this.state.pager;
         let items = this.props.items;
-
+        let page = parseInt(this.props.page);
         return (
-            <ul className="pagination">
-               {    pager.currentPage == 1? " ":
-                   <button onClick={() => this.setPage(pager.currentPage - 1,items)}>Previous</button>
+            <div className="pagination" style={{marginTop:'20px'}}>
+               {    page === 1 ? " ":
+                   <RaisedButton label="Previous" style={{float:'left',marginLeft:'50px'}} primary={true} onClick={() => this.props.history.push(`/pages/${page-1}`) } />
                } 
+
                {
-                    pager.currentPage == pager.totalPages? " ":
-                    <button onClick={() => this.setPage(pager.currentPage + 1,items)}>Next</button>
+                    page === pager.totalPages? " ":
+                    <RaisedButton label="Next" primary={true} style={{float:'right',marginRight:'50px'}} onClick={() => this.props.history.push(`/pages/${page+1}`) } />
                }
-            </ul>
+            </div>
         );
     }
 }
 
+Pagination = withRouter(Pagination);
 export default Pagination;

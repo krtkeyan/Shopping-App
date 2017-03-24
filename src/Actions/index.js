@@ -69,14 +69,24 @@ export const checkOut = () => (dispatch,getState) => {
              })
      });
      
+     const delay = new Promise((res,rej)=>setTimeout(rej,10000,'Operation Time Out'))
+     
      Promise.all(promiseArray)
             .then((resolver)=>{
+                
+                let firebaseUpdate = Promise.all([...resolver.map(update => update())]);
                       dispatch({
                         type:'CHECKOUT_REQUEST',
                       })
-                      Promise.all([...resolver.map(update => update())]).then(()=>dispatch({
+                      Promise.race([firebaseUpdate,delay]).then(()=>dispatch({
                           type:'CHECKOUT_SUCCESS'
-                      }))
+                      })
+                      ,(reason)=>{
+                        dispatch({
+                            type:'CHECKOUT_FAILURE',
+                            message:reason
+                      })
+                      })
                },(reason)=>{
                       dispatch({
                         type:'CHECKOUT_FAILURE',
